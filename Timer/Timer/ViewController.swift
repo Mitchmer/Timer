@@ -71,7 +71,44 @@ extension ViewController: NapTimerDelegate {
     }
     
     func timerCompleted() {
-        // present alert
+        presentAlert()
+
+    }
+    
+    func presentAlert() {
+        // create alert controller
+        
+        let alertController = UIAlertController(title: "TIME'S UP", message: "Do you want to keep sleeping?", preferredStyle: .alert)
+        
+        // add textdield and actions
+        
+        alertController.addTextField { (textField) in
+            textField.keyboardType = .numberPad
+            textField.placeholder = "How many more seconds of sleep?"
+        }
+        
+        let dismissAction = UIAlertAction(title: "I'm awake", style: .cancel, handler: nil)
+        let snoozeAction = UIAlertAction(title: "Snooze", style: .default) { (_) in
+            // IF there's a textfield
+            if let textField = alertController.textFields?.first,
+                
+                // and IF there's text in it
+                let inputText = textField.text,
+                
+                // and IF that text is convertable to a double
+                let textAsDouble = Double(inputText) {
+                
+                // THEN start the timer over
+                self.napTimer.startTimer(textAsDouble)
+            }
+        }
+        
+        alertController.addAction(dismissAction)
+        alertController.addAction(snoozeAction)
+        
+        // present alert controller
+        
+        present(alertController, animated: true)
     }
 }
 

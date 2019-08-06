@@ -50,7 +50,7 @@ class NapTimer {
     }
     
     func timeLeftAsString() -> String {
-        let timeRemaining = Int(timeLeft ?? 3 * 60)
+        let timeRemaining = Int(timeLeft ?? 0)
         
         // tpta; to,e remaining (in seconds) divided by 60 to make minutes
         let minutesRemaining = timeRemaining / 60
