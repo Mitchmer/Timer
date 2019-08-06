@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 class ViewController: UIViewController {
 
@@ -55,6 +56,31 @@ class ViewController: UIViewController {
         timerButton.setTitle(buttonTitle, for: .normal)
         timerButton.setTitleColor(buttonColor, for: .normal)
     }
+    
+    func scheduleLocalAlert(in timeInterval: TimeInterval) {
+        
+        //content of our notification (what it looks like)
+        let content = UNMutableNotificationContent()
+        content.title = "Time's up"
+        content.body = "All your time ran out!"
+        content.sound = UNNotificationSound.default
+        
+        //how long into the future it will be scheduled
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)
+        
+        // the completed request (content + trigger)
+        let request = UNNotificationRequest(identifier: "napTimer", content: content, trigger: trigger)
+        
+        // schedule the request
+        UNUserNotificationCenter.current().add(request) { (error) in
+            if let error = error {
+                
+                print("NOTIFICATION FAILED")
+                print(error.localizedDescription)
+                print(error)
+            }
+        }
+    }
 }
 
 
@@ -100,9 +126,11 @@ extension ViewController: NapTimerDelegate {
                 
                 // THEN start the timer over
                 self.napTimer.startTimer(textAsDouble)
+                self.scheduleLocalAlert(in: textAsDouble)
             }
         }
         
+        // assigns alerts to the alert controller we made
         alertController.addAction(dismissAction)
         alertController.addAction(snoozeAction)
         
