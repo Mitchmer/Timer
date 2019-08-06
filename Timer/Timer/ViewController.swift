@@ -21,7 +21,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        napTimer.startTimer(33)
+        napTimer.startTimer(120)
         
         // Do any additional setup after loading the view.
     }
@@ -29,6 +29,7 @@ class ViewController: UIViewController {
     // MARK: Actions
     
     @IBAction func timerButtonTapped(_ sender: Any) {
+        
     }
     
     // MARK: Custom Methods

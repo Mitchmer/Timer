@@ -8,10 +8,18 @@
 
 import Foundation
 
+protocol NapTimerDelegate: class {
+    
+    func timerSecondTicked()
+    func timerStopped()
+    func timerCompleted()
+}
+
 class NapTimer {
     
     // MARK: Properties
     
+    weak var delegate: NapTimerDelegate?
     private var timer: Timer?
     var timeLeft: TimeInterval?
     var isOn: Bool {
@@ -26,7 +34,7 @@ class NapTimer {
             print("Timer is already running")
         } else {
             self.timeLeft = time
-            self.timer = Timer(timeInterval: 1, repeats: true, block: { (_) in
+            self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (_) in
                 self.secondTicked()
             })
         }
@@ -34,10 +42,23 @@ class NapTimer {
     
     func stopTimer() {
         timeLeft = nil
+        // stops everything Timer is doing
         timer?.invalidate()
         print("Stopped timer!")
         // let the view controller know
+        delegate?.timerStopped()
+    }
+    
+    func timeLeftAsString() -> String {
+        let timeRemaining = Int(timeLeft ?? 3 * 60)
         
+        // tpta; to,e remaining (in seconds) divided by 60 to make minutes
+        let minutesRemaining = timeRemaining / 60
+        
+        // subtract minutes * 60 from the total time remaining
+        let secondsRemaining = timeRemaining - (minutesRemaining * 60)
+        // %02d allows the timer to show 2 digits, i.e. 10 : 01
+        return String(format: "%02d : %02d", arguments: [minutesRemaining, secondsRemaining])
     }
     
     // MARK: Private Methods
@@ -49,14 +70,15 @@ class NapTimer {
             // lower time by one second
             
             self.timeLeft = timeLeft - 1
-            print(self.timeLeft as Any)
-            
+            print(self.timeLeftAsString())
+            delegate?.timerSecondTicked()
             // let the view controller know
             
         } else {
             // timer complete
             
             stopTimer()
+            delegate?.timerCompleted()
         }
     }
     
