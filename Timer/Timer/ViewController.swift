@@ -21,27 +21,57 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        napTimer.startTimer(120)
         
-        // Do any additional setup after loading the view.
+        napTimer.delegate = self
     }
     
     // MARK: Actions
     
     @IBAction func timerButtonTapped(_ sender: Any) {
         
+        if napTimer.isOn {
+            napTimer.stopTimer()
+        } else {
+            napTimer.startTimer(8)
+        }
     }
     
     // MARK: Custom Methods
-    
-    /*
-    // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func updateLabelAndButton() {
+        timerLabel.text = napTimer.timeLeftAsString()
+        
+        var buttonTitle = ""
+        var buttonColor: UIColor = .white
+        
+        if napTimer.isOn {
+            buttonTitle = "STOP"
+            buttonColor = .red
+        } else {
+            buttonTitle = "START"
+            buttonColor = .green
+        }
+        
+        timerButton.setTitle(buttonTitle, for: .normal)
+        timerButton.setTitleColor(buttonColor, for: .normal)
     }
-    */
-
 }
+
+
+// MARK: NapTimer delegate
+
+extension ViewController: NapTimerDelegate {
+    
+    func timerSecondTicked() {
+        updateLabelAndButton()
+    }
+    
+    func timerStopped() {
+        updateLabelAndButton()
+    }
+    
+    func timerCompleted() {
+        // present alert
+    }
+}
+
